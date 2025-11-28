@@ -1,4 +1,4 @@
-import { Application } from "../aplications/application";
+import { Application } from "../aplications/application.interface";
 
 export interface JobSeeker {
   _id?: string;

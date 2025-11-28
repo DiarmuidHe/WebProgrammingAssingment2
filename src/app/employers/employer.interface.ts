@@ -1,4 +1,4 @@
-import { Job } from "../jobs/job";
+import { Job } from "../jobs/job.interface";
 
 export interface Employer {
   _id?: string;
