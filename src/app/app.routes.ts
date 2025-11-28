@@ -1,3 +1,6 @@
 import { Routes } from '@angular/router';
-
-export const routes: Routes = [];
+import { EmployerList } from './employer-list/employer-list';
+export const routes: Routes = [
+    {path: '', redirectTo: '/employers', pathMatch: 'full' },
+    { path: 'employers', component: EmployerList },
+];
