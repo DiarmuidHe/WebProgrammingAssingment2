@@ -1,31 +1,149 @@
-.container {
-  padding: 16px;
+.employer-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.spacer {
-  flex: 1 1 auto;
+.employer-card {
+  .employer-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .employer-location {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    mat-icon {
+      font-size: 18px;
+    }
+  }
+
+  .employer-meta {
+    margin: 12px 0 16px;
+
+    a[mat-stroked-button] {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .employer-description {
+    margin: 0;
+    line-height: 1.5;
+  }
 }
 
-.error {
-  color: #f44336;
-  margin: 8px 0;
+.jobs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.logo-avatar img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
+.jobs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  h3 {
+    margin: 0;
+  }
 }
 
-.jobs-title {
-  margin-top: 24px;
+.jobs-card {
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .jobs-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th.mat-header-cell {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 12px 16px;
+    white-space: nowrap;
+  }
+
+  td.mat-cell {
+    padding: 12px 16px;
+  }
+
+  .job-title-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 20px;
+    }
+  }
 }
 
-.muted {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.54);
+/* Optional: tweak specific column widths */
+.mat-column-title {
+  min-width: 200px;
 }
 
-table {
-  width: 100%;
+.mat-column-location {
+  min-width: 150px;
+}
+
+.mat-column-jobType {
+  min-width: 130px;
+}
+
+.mat-column-active,
+.mat-column-postedAt {
+  white-space: nowrap;
+}
+
+/* No jobs state */
+.no-jobs-card {
+  .no-jobs-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    mat-icon {
+      font-size: 32px;
+    }
+
+    .muted {
+      color: rgba(0, 0, 0, 0.54);
+      margin: 0;
+      font-size: 13px;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+/* Loading state */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 0;
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
 }

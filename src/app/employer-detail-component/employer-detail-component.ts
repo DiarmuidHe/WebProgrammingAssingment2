@@ -1,115 +1,86 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { EmployerService } from '../employers/employer.service';
 import { Employer } from '../employers/employer.interface';
 import { Job } from '../jobs/job.interface';
-import { EmployerService } from '../employers/employer.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatCardContent, MatCardHeader, MatCardTitle, MatCardSubtitle } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
+import { DatePipe } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
-import { MatToolbar } from '@angular/material/toolbar';
-import { CommonModule } from '@angular/common';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { RouterLink } from '@angular/router';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIcon } from '@angular/material/icon';
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-employer-detail-component',
   standalone: true,
   imports: [
-    RouterLink,
-    MatButtonModule,
-    MatCard,
-    MatCardContent,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatSlideToggle,
-    MatProgressBar,
+    DatePipe,   
+    MatProgressSpinner,
+    MatCardModule,
     MatTableModule,
-    MatToolbar,
-    MatCardHeader,
-    CommonModule
+    MatSlideToggleModule,
+    MatButtonModule,
+    MatChipsModule,
+    MatIcon
   ],
   templateUrl: './employer-detail-component.html',
   styleUrl: './employer-detail-component.scss',
 })
 export class EmployerDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private employerService = inject(EmployerService);
+  constructor(private cdr: ChangeDetectorRef) {}
   employer: Employer | null = null;
-  jobsDataSource = new MatTableDataSource<Job>([]);
-  displayedJobColumns = [
+
+  displayedColumns: string[] = [
     'title',
     'location',
     'jobType',
-    'salary',
     'active',
-    'postedAt',
-    'actions'
+    'postedAt'
   ];
-  isLoading = false;
-  errorMessage = '';
-
-  constructor(
-    private route: ActivatedRoute,
-    private employerService: EmployerService,
-    private cdr: ChangeDetectorRef          //  inject this
-  ) {}
 
   ngOnInit(): void {
-    this.loadEmployer();
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.loadEmployer(id);
+    }
   }
 
-  loadEmployer(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      this.errorMessage = 'Invalid employer id.';
-      return;
-    }
-
-    this.isLoading = true;
-    this.errorMessage = '';
-    console.log('Loading employer', id);
-
+  loadEmployer(id: string): void {
     this.employerService.getEmployerById(id).subscribe({
-      next: (employer) => {
-        console.log('Employer loaded', employer);
-        this.employer = employer;
-        this.jobsDataSource.data = employer.jobs || [];
-        this.isLoading = false;
-
-        this.cdr.markForCheck();           // tell Angular to update the view
-      },
-      error: (error) => {
-        console.error(error);
-        this.errorMessage = 'Failed to load employer.';
-        this.isLoading = false;
-
-        this.cdr.markForCheck();           // also on error
-      }
+      next: (data) => {this.employer = data; this.cdr.markForCheck(); }
+      ,
+      error: (err) => {console.error('Error loading employer', err); this.cdr.markForCheck();   } 
     });
   }
 
-  onToggleActive(job: Job): void {
-    if (!this.employer || !this.employer._id) return;
+  onToggleJobActive(job: Job): void {
+    if (!this.employer || !this.employer._id) {
+      return;
+    }
 
-    const newValue = !job.active;
-    this.employerService
-      .toggleJobActive(this.employer._id, job.jobId, newValue)
-      .subscribe({
-        next: (updatedJob) => {
-          job.active = updatedJob.active;
-          this.jobsDataSource.data = [...this.jobsDataSource.data];
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          console.error(error);
-          this.errorMessage = 'Failed to toggle job status.';
-          this.cdr.markForCheck();
+    const employerId = this.employer._id;
+    const newStatus = !job.active;
+
+    this.employerService.toggleJobActive(employerId, job.jobId, newStatus).subscribe({
+      next: (updatedJob) => {
+        if (!this.employer) {
+          return;
         }
-      });
-  }
-
-  getSalaryDisplay(job: Job): string {
-    if (!job.salary) return '';
-    return `${job.salary.currency} ${job.salary.min} - ${job.salary.max}`;
+        const jobs = this.employer.jobs || [];
+        const index = jobs.findIndex(j => j.jobId === job.jobId);
+        if (index >= 0) {
+          jobs[index] = { ...jobs[index], active: updatedJob.active };
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error toggling job status', err);
+        this.cdr.markForCheck();
+      }
+    });
   }
 }

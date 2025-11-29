@@ -1,88 +1,73 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatTableDataSource } from '@angular/material/table';
-import { Employer } from '../employers/employer.interface';
+import { Component, OnInit, inject } from '@angular/core';
 import { EmployerService } from '../employers/employer.service';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatCard } from '@angular/material/card';
-import { MatCardContent } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
+import { Employer } from '../employers/employer.interface';
+import { AsyncPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import {ChangeDetectorRef} from '@angular/core';
 @Component({
   selector: 'app-employer-list',
     imports: [
-    MatToolbar,
-    MatCard,
-    MatCardContent,
-    MatProgressBar,
     MatTableModule,
-    MatButtonModule
+    MatButtonModule,
+    RouterLink
   ],
   standalone: true,
   templateUrl: './employer-list.html',
   styleUrls: ['./employer-list.scss']
 })
-export class EmployerList implements OnInit {
+export class EmployerList {
 
-  displayedColumns: string[] = ['companyName', 'contactEmail', 'location', 'jobsCount', 'actions'];
-  dataSource: MatTableDataSource<Employer> = new MatTableDataSource<Employer>([]);
-  isLoading = false;
-  errorMessage = '';
+  private employerService = inject(EmployerService);
+  constructor(private cdr: ChangeDetectorRef) {}
+  displayedColumns: string[] = [
+    'companyName',
+    'contactEmail',
+    'location',
+    'jobs',
+    'actions'
+  ];
 
-  constructor(
-    private employerService: EmployerService,
-    private router: Router
-  ) { }
+  employers: Employer[] = [];
+  loading = false;
 
   ngOnInit(): void {
     this.loadEmployers();
   }
 
   loadEmployers(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.loading = true;
     this.employerService.getEmployers().subscribe({
-      next: (employers) => {
-        this.dataSource.data = employers;
-        this.isLoading = false;
+      next: (data) => {
+        this.employers = data;
+        this.loading = false;
+        this.cdr.markForCheck();
       },
-      error: (error) => {
-        console.error(error);
-        this.errorMessage = 'Failed to load employers.';
-        this.isLoading = false;
+      error: (err) => {
+        console.error('Error loading employers', err);
+        this.loading = false;
+        this.cdr.markForCheck();
       }
+    });
+  }
+
+  deleteEmployer(id?: string): void {
+    if (!id) {
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this employer?')) {
+      return;
+    }
+
+    this.employerService.deleteEmployer(id).subscribe({
+      next: () => this.loadEmployers(),
+      error: (err) => console.error('Error deleting employer', err)
     });
   }
 
   getJobsCount(employer: Employer): number {
     return employer.jobs ? employer.jobs.length : 0;
-  }
-
-  onView(employer: Employer): void {
-    if (!employer._id) {
-      return;
-    }
-    this.router.navigate(['/employers', employer._id]);
-  }
-
-  onDelete(employer: Employer): void {
-    if (!employer._id) {
-      return;
-    }
-    if (!confirm(`Are you sure you want to delete employer "${employer.companyName}"?`)) {
-      return;
-    }
-    this.employerService.deleteEmployer(employer._id).subscribe({
-      next: () => this.loadEmployers(),
-      error: (error) => {
-        console.error(error);
-        this.errorMessage = 'Failed to delete employer.';
-      }
-    });
-  }
-
-  onCreate(): void {
-    this.router.navigate(['/employers/new']);
   }
 }

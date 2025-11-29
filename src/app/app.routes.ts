@@ -8,7 +8,7 @@ import { JobseekerListComponent } from './jobseeker-list-component/jobseeker-lis
 // import { JobSeekerFormComponent } from './jobseeker-form-component/jobseeker-form-component';
 import { JobseekerDetailComponent } from './jobseeker-detail-component/jobseeker-detail-component';
 export const routes: Routes = [
-    {path: '', redirectTo: '/employers', pathMatch: 'full' },
+    { path: '', component: EmployerList }, 
     { path: 'employers', component: EmployerList },
     { path: 'employers/new', component: EmployerFormComponent },
     { path: 'employers/:id', component: EmployerDetailComponent },

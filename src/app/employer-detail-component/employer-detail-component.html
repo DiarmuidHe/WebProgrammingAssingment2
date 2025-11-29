@@ -1,103 +1,152 @@
-<mat-toolbar color="primary">
-  <span>JobFinder - Employer Detail</span>
-  <span class="spacer"></span>
-  <button mat-button routerLink="/employers">Employers</button>
-  <button mat-button routerLink="/jobseekers">Jobseekers</button>
-</mat-toolbar>
-
-<div class="container">
-  <button mat-button routerLink="/employers">
-    &larr; Back to Employers
-  </button>
-
-  @if (isLoading) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  }
-
-  @if (errorMessage) {
-    <div class="error">
-      {{ errorMessage }}
-    </div>
-  }
+<div class="employer-page">
 
   @if (employer) {
-    <mat-card>
+
+    <!-- EMPLOYER CARD -->
+    <mat-card class="employer-card mat-elevation-z4">
       <mat-card-header>
-        @if (employer.logo) {
-          <div mat-card-avatar class="logo-avatar">
-            <img [src]="employer.logo" alt="{{ employer.companyName }} logo">
-          </div>
-        }
+        <div mat-card-avatar class="employer-avatar">
+          <mat-icon>business</mat-icon>
+        </div>
+
         <mat-card-title>{{ employer.companyName }}</mat-card-title>
-        <mat-card-subtitle>{{ employer.location }}</mat-card-subtitle>
+
+        <mat-card-subtitle class="employer-location">
+          <mat-icon inline>location_on</mat-icon>
+          <span>{{ employer.location || 'Location not specified' }}</span>
+        </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
-        <p><strong>Contact:</strong> {{ employer.contactEmail }}</p>
-        <p><strong>Description:</strong></p>
-        <p>{{ employer.description }}</p>
+        <div class="employer-meta">
+          <a
+            mat-stroked-button
+            color="primary"
+            [href]="'mailto:' + employer.contactEmail">
+            <mat-icon>email</mat-icon>
+            <span>{{ employer.contactEmail }}</span>
+          </a>
+        </div>
+
+        <p class="employer-description">
+          {{ employer.description }}
+        </p>
       </mat-card-content>
     </mat-card>
+
+    <!-- JOBS SECTION -->
+    <section class="jobs-section">
+
+      <div class="jobs-header">
+        <h3>Jobs</h3>
+
+        @if (employer.jobs?.length) {
+          <mat-chip-set>
+            <mat-chip color="primary" selected>
+              {{ employer.jobs.length }} open
+              {{ employer.jobs.length === 1 ? 'role' : 'roles' }}
+            </mat-chip>
+          </mat-chip-set>
+        }
+      </div>
+
+      @if (employer.jobs?.length) {
+
+        <mat-card class="jobs-card mat-elevation-z2">
+          <mat-card-content>
+
+            <div class="table-wrapper">
+              <table
+                mat-table
+                [dataSource]="employer.jobs"
+                class="jobs-table mat-elevation-z0">
+
+                <!-- Title Column -->
+                <ng-container matColumnDef="title">
+                  <th mat-header-cell *matHeaderCellDef> Title </th>
+                  <td mat-cell *matCellDef="let job">
+                    <div class="job-title-cell">
+                      <mat-icon>work</mat-icon>
+                      <span>{{ job.title }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Location Column -->
+                <ng-container matColumnDef="location">
+                  <th mat-header-cell *matHeaderCellDef> Location </th>
+                  <td mat-cell *matCellDef="let job"> {{ job.location }} </td>
+                </ng-container>
+
+                <!-- Type Column -->
+                <ng-container matColumnDef="jobType">
+                  <th mat-header-cell *matHeaderCellDef> Type </th>
+                  <td mat-cell *matCellDef="let job">
+                    <mat-chip-set>
+                      <mat-chip appearance="outlined">
+                        {{ job.jobType }}
+                      </mat-chip>
+                    </mat-chip-set>
+                  </td>
+                </ng-container>
+
+                <!-- Active Column -->
+                <ng-container matColumnDef="active">
+                  <th mat-header-cell *matHeaderCellDef> Active </th>
+                  <td mat-cell *matCellDef="let job">
+                    <mat-slide-toggle
+                      color="primary"
+                      [checked]="job.active"
+                      (change)="onToggleJobActive(job)">
+                      {{ job.active ? 'Active' : 'Inactive' }}
+                    </mat-slide-toggle>
+                  </td>
+                </ng-container>
+
+                <!-- Posted Column -->
+                <ng-container matColumnDef="postedAt">
+                  <th mat-header-cell *matHeaderCellDef> Posted </th>
+                  <td mat-cell *matCellDef="let job">
+                    {{ job.postedAt | date: 'mediumDate' }}
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+              </table>
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+
+      } @else {
+
+        <mat-card class="no-jobs-card mat-elevation-z1">
+          <mat-card-content class="no-jobs-content">
+            <mat-icon>work_off</mat-icon>
+            <div>
+              <p>No jobs for this employer right now.</p>
+              <p class="muted">Check back soon for new opportunities.</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+      }
+
+    </section>
+
+  } @else {
+
+    <!-- LOADING STATE -->
+    <div class="loading-state">
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="40">
+      </mat-progress-spinner>
+      <p>Loading employer...</p>
+    </div>
+
   }
 
-  @if (employer) {
-    <h2 class="jobs-title">Jobs at {{ employer.companyName }}</h2>
-
-    <mat-card>
-      <mat-card-content>
-        <table mat-table [dataSource]="jobsDataSource" class="mat-elevation-z2">
-
-          <ng-container matColumnDef="title">
-            <th mat-header-cell *matHeaderCellDef> Title </th>
-            <td mat-cell *matCellDef="let job"> {{ job.title }} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="location">
-            <th mat-header-cell *matHeaderCellDef> Location </th>
-            <td mat-cell *matCellDef="let job"> {{ job.location }} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="jobType">
-            <th mat-header-cell *matHeaderCellDef> Type </th>
-            <td mat-cell *matCellDef="let job"> {{ job.jobType }} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="salary">
-            <th mat-header-cell *matHeaderCellDef> Salary </th>
-            <td mat-cell *matCellDef="let job">
-              {{ getSalaryDisplay(job) }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="active">
-            <th mat-header-cell *matHeaderCellDef> Active </th>
-            <td mat-cell *matCellDef="let job">
-              <mat-slide-toggle 
-                [checked]="job.active"
-                (change)="onToggleActive(job)">
-              </mat-slide-toggle>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="postedAt">
-            <th mat-header-cell *matHeaderCellDef> Posted </th>
-            <td mat-cell *matCellDef="let job">
-              {{ job.postedAt | date:'medium' }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Actions </th>
-            <td mat-cell *matCellDef="let job">
-              <span class="muted">Toggle active using switch</span>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedJobColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedJobColumns;"></tr>
-
-        </table>
-      </mat-card-content>
-    </mat-card>
-  }
 </div>
