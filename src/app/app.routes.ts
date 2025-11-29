@@ -5,23 +5,16 @@ import { EmployerDetailComponent } from './employer-detail-component/employer-de
 import { EmployerFormComponent } from './employer-form-component/employer-form-component';
 
 import { JobseekerListComponent } from './jobseeker-list-component/jobseeker-list-component';
-// import { JobSeekerFormComponent } from './jobseeker-form-component/jobseeker-form-component';
+
 import { JobseekerDetailComponent } from './jobseeker-detail-component/jobseeker-detail-component';
+
 export const routes: Routes = [
-    { path: '', component: EmployerList }, 
+    { path: '', component: JobseekerListComponent }, 
     { path: 'employers', component: EmployerList },
     { path: 'employers/new', component: EmployerFormComponent },
     { path: 'employers/:id', component: EmployerDetailComponent },
     
     { path: 'jobseekers', component: JobseekerListComponent },
-    // { path: 'jobseekers/new', component: JobSeekerFormComponent },
-    { path: 'jobs/:employerId/:jobId', component: JobseekerDetailComponent },
-    { path: '**', redirectTo: '/employers' }
+    { path: 'jobseekers/:employerId/:jobId', component: JobseekerDetailComponent },
 ];
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
-
 

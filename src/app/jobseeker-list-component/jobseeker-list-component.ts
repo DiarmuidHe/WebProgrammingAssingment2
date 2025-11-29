@@ -163,7 +163,7 @@ export class JobseekerListComponent implements OnInit {
     if (!job.salary) {
       return '';
     }
-    return `${job.salary.currency} ${job.salary.min.toLocaleString()} - ${job.salary.max.toLocaleString()}`;
+    return `${job.salary?.currency} ${job.salary?.min?.toLocaleString() ?? 'N/A' } - ${ job.salary?.max?.toLocaleString() ?? 'N/A' }`;
   }
 
 }

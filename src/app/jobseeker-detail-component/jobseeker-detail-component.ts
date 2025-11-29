@@ -18,7 +18,6 @@ import { MatDivider } from '@angular/material/divider';
     MatCardModule,
     MatButtonModule,
     MatChipsModule,
-    RouterLink,
     MatIcon,
     MatProgressSpinner,
     MatDivider
@@ -32,7 +31,7 @@ export class JobseekerDetailComponent {
   private employerService = inject(EmployerService);
   constructor(
 
-    private cdr: ChangeDetectorRef          //  inject this
+    private cdr: ChangeDetectorRef
   ) {}
   employer: Employer | null = null;
   job: Job | null = null;
@@ -42,7 +41,7 @@ export class JobseekerDetailComponent {
     const jobId = this.route.snapshot.paramMap.get('jobId');
 
     if (!employerId || !jobId) {
-      this.router.navigate(['/jobs']);
+      this.router.navigate(['/jobseekers']);
       return;
     }
 
@@ -55,7 +54,7 @@ export class JobseekerDetailComponent {
       },
       error: (err) => {
         console.error('Error loading job detail', err);
-        this.router.navigate(['/jobs']);
+        this.router.navigate(['/jobseekers']);
         this.cdr.markForCheck();
       }
     });
@@ -65,9 +64,11 @@ export class JobseekerDetailComponent {
       if (!this.job || !this.job.salary) {
         return '';
       }
-      return `${this.job.salary.currency} ${this.job.salary.min.toLocaleString()} - ${this.job.salary.max.toLocaleString()}`;
+      return `${this.job.salary?.currency} ${ this.job.salary?.min?.toLocaleString() ?? 'N/A' } - ${this.job.salary?.max?.toLocaleString() ?? 'N/A' }`;
     }
-
+    GoToJobList(): void {
+      this.router.navigate(['/jobseekers']);
+    }
     onApply(): void {
       // Placeholder: this could navigate to a jobseeker form or application flow
       alert('Apply feature not implemented yet. Connect this to JobSeekerService.');

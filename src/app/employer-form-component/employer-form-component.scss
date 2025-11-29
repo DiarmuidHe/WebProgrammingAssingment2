@@ -1,9 +1,6 @@
-.container {
-  padding: 16px;
-}
-
-.spacer {
-  flex: 1 1 auto;
+.form-card {
+  max-width: 100em;
+  margin: 0 auto;
 }
 
 .full-width {
@@ -11,10 +8,8 @@
 }
 
 .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
   margin-top: 16px;
-}
-
-.error {
-  color: #f44336;
-  margin-bottom: 8px;
 }

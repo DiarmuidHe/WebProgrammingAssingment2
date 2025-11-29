@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { JobSeeker } from './jobseeker.interface';
 import { Application } from '../aplications/application.interface';
-
+import { environment } from '../../environments/environment.development';
 @Injectable({
   providedIn: 'root'
 })
 export class JobSeekerService {
 
-  private apiUrl = 'http://localhost:3000/api/v1/jobseeker';
+  private apiUrl = `${environment.apiUri}/jobseekers`;
 
   constructor(private http: HttpClient) { }
 

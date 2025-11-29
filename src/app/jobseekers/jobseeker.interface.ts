@@ -8,3 +8,5 @@ export interface JobSeeker {
   skills: string[];
   applications: Application[];
 }
+
+

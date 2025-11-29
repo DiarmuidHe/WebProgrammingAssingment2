@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Employer } from './employer.interface';
 import { Job } from '../jobs/job.interface';
-
+import { environment } from '../../environments/environment.development';
 @Injectable({
   providedIn: 'root'
 })
 export class EmployerService {
 
-  private apiUrl = 'http://localhost:3000/api/v1/employers';
+  private apiUrl = `${environment.apiUri}/employers`;
 
   constructor(private http: HttpClient) { }
 
@@ -41,13 +41,20 @@ export class EmployerService {
     return this.http.get<Job>(url);
   }
 
-  addJobs(employerId: string, jobs: Job[]): Observable<Employer> {
-    const url = `${this.apiUrl}/${employerId}/jobs`;
-    return this.http.post<Employer>(url, { jobs });
-  }
+
 
   toggleJobActive(employerId: string, jobId: string, active: boolean): Observable<Job> {
     const url = `${this.apiUrl}/${employerId}/jobs/${jobId}/active`;
     return this.http.patch<Job>(url, { active });
   }
+
+  addJobs(
+    employerId: string,
+    jobs: Job[]
+  ): Observable<{ message: string; added: string[] }> {
+    const url = `${this.apiUrl}/${employerId}/jobs`;
+    return this.http.post<{ message: string; added: string[] }>(url, { jobs });
+  }
+
+
 }

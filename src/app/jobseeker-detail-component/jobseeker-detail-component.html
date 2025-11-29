@@ -110,15 +110,15 @@
       </section>
     </mat-card-content>
 
-    <mat-card-actions align="end">
+    <mat-card-actions>
       <button mat-raised-button color="primary" (click)="onApply()">
         <mat-icon>send</mat-icon>
         <span>Apply</span>
       </button>
-      <a mat-stroked-button [routerLink]="['/jobs']">
+      <button mat-stroked-button (click)="GoToJobList()">
         <mat-icon>arrow_back</mat-icon>
         <span>Back to job search</span>
-      </a>
+      </button>
     </mat-card-actions>
   </mat-card>
 

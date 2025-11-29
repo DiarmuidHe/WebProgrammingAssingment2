@@ -1,77 +1,75 @@
-<mat-toolbar color="primary">
-  <span>JobFinder - New Employer</span>
-  <span class="spacer"></span>
-  <button mat-button routerLink="/employers">Employers</button>
-  <button mat-button routerLink="/jobseekers">Jobseekers</button>
-</mat-toolbar>
+<mat-card class="form-card">
+  <mat-card-title>New Employer</mat-card-title>
 
-<div class="container">
-  <button mat-button routerLink="/employers">
-    ← Back to Employers
-  </button>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-  <mat-card>
-    <mat-card-title>New Employer</mat-card-title>
-    <mat-card-content>
-      <form [formGroup]="employerForm" (ngSubmit)="onSubmit()">
+      <!-- Company Name -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Company Name</mat-label>
+        <input matInput formControlName="companyName" />
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Company Name</mat-label>
-          <input matInput formControlName="companyName" required>
-          @if (companyName?.hasError('required')) {
-            <mat-error>Company name is required.</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Contact Email</mat-label>
-          <input matInput formControlName="contactEmail" required>
-          @if (contactEmail?.hasError('required')) {
-            <mat-error>Contact email is required.</mat-error>
-          }
-          @if (contactEmail?.hasError('email')) {
-            <mat-error>Please enter a valid email address.</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" rows="4" required></textarea>
-          @if (description?.hasError('required')) {
-            <mat-error>Description is required.</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Location</mat-label>
-          <input matInput formControlName="location" required>
-          @if (location?.hasError('required')) {
-            <mat-error>Location is required.</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Logo URL</mat-label>
-          <input matInput formControlName="logo">
-        </mat-form-field>
-
-        @if (errorMessage) {
-          <div class="error">
-            {{ errorMessage }}
-          </div>
+        @if (form.get('companyName')?.invalid && form.get('companyName')?.touched) {
+          <mat-error>Company name is required</mat-error>
         }
+      </mat-form-field>
 
-        <div class="actions">
-          <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting">
-            Create
-          </button>
-        </div>
+      <!-- Contact Email -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contact Email</mat-label>
+        <input matInput formControlName="contactEmail" />
 
-        @if (isSubmitting) {
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        @if (form.get('contactEmail')?.hasError('required') && form.get('contactEmail')?.touched) {
+          <mat-error>Contact email is required</mat-error>
+        } @else if (form.get('contactEmail')?.hasError('email') && form.get('contactEmail')?.touched) {
+          <mat-error>Please enter a valid email address</mat-error>
         }
+      </mat-form-field>
 
-      </form>
-    </mat-card-content>
-  </mat-card>
-</div>
+      <!-- Location -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Location</mat-label>
+        <input matInput formControlName="location" />
+
+        @if (form.get('location')?.invalid && form.get('location')?.touched) {
+          <mat-error>Location is required</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Logo URL -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Logo URL</mat-label>
+        <input matInput formControlName="logo" />
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          rows="4"
+          formControlName="description">
+        </textarea>
+      </mat-form-field>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid">
+          Save
+        </button>
+
+        <button
+          mat-button
+          type="button"
+          routerLink="/employers">
+          Cancel
+        </button>
+      </div>
+
+    </form>
+  </mat-card-content>
+</mat-card>

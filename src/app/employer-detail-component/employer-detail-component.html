@@ -148,5 +148,94 @@
     </div>
 
   }
+    <!-- ADD JOB FORM (Reactive) -->
+    <mat-card class="add-job-card mat-elevation-z2">
+    <mat-card-title>Add New Job</mat-card-title>
+    <mat-card-content>
+
+        <form [formGroup]="jobForm" (ngSubmit)="onSubmitJob()">
+
+        <div class="form-grid">
+
+            <!-- Job ID -->
+            <mat-form-field appearance="outline">
+            <mat-label>Job ID</mat-label>
+            <input matInput formControlName="jobId" />
+            <mat-error *ngIf="jobForm.get('jobId')?.invalid && jobForm.get('jobId')?.touched">
+                Job ID is required
+            </mat-error>
+            </mat-form-field>
+
+            <!-- Title -->
+            <mat-form-field appearance="outline">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" />
+            <mat-error *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched">
+                Title is required
+            </mat-error>
+            </mat-form-field>
+
+            <!-- Location -->
+            <mat-form-field appearance="outline">
+            <mat-label>Location</mat-label>
+            <input matInput formControlName="location" />
+            </mat-form-field>
+
+            <!-- Job Type -->
+            <mat-form-field appearance="outline">
+            <mat-label>Job Type</mat-label>
+            <mat-select formControlName="jobType">
+                <mat-option value="full-time">Full-Time</mat-option>
+                <mat-option value="part-time">Part-Time</mat-option>
+                <mat-option value="remote">Remote</mat-option>
+                <mat-option value="contract">Contract</mat-option>
+            </mat-select>
+            </mat-form-field>
+
+        </div>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput rows="3" formControlName="description"></textarea>
+        </mat-form-field>
+        
+        <!-- Salary -->
+        <div class="form-grid">
+            <mat-form-field appearance="outline">
+            <mat-label>Salary Min</mat-label>
+            <input matInput type="number" formControlName="salaryMin" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+            <mat-label>Salary Max</mat-label>
+            <input matInput type="number" formControlName="salaryMax" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+            <mat-label>Currency</mat-label>
+            <input matInput formControlName="salaryCurrency" />
+            </mat-form-field>
+        </div>
+
+        <!-- Categories -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Categories (comma separated)</mat-label>
+            <input matInput formControlName="categories" />
+        </mat-form-field>
+
+        <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="jobForm.invalid">
+            Add Job
+        </button>
+
+        </form>
+
+    </mat-card-content>
+    </mat-card>
+
 
 </div>
