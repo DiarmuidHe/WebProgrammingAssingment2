@@ -93,18 +93,20 @@ export class EmployerDetailComponent implements OnInit {
     const employerId = this.employer._id;
     const newStatus = !job.active;
 
+    // local update so the UI reacts immediately
+    const previousStatus = job.active;
+    job.active = newStatus;
+
     this.employerService.toggleJobActive(employerId, job.jobId, newStatus).subscribe({
       next: (updatedJob) => {
-        if (!this.employer) return;
-        const jobs = this.employer.jobs || [];
-        const index = jobs.findIndex(j => j.jobId === job.jobId);
-        if (index >= 0) {
-          jobs[index] = { ...jobs[index], active: updatedJob.active };
-        }
+        job.active = newStatus;
+
         this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error toggling job status', err);
+        // 🔁 Revert UI on error
+        job.active = previousStatus;
         this.cdr.markForCheck();
       }
     });

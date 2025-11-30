@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {  Observable } from 'rxjs';
 import { JobSeeker } from './jobseeker.interface';
 import { Application } from '../aplications/application.interface';
 import { environment } from '../../environments/environment.development';
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class JobSeekerService {
 
-  private apiUrl = `${environment.apiUri}/jobseekers`;
+  private apiUrl = `${environment.apiUri}/jobseeker`;
 
   constructor(private http: HttpClient) { }
 
@@ -41,8 +43,12 @@ export class JobSeekerService {
     return this.http.get<Application[]>(url);
   }
 
-  addApplications(jobSeekerId: string, applications: Application[]): Observable<JobSeeker> {
-    const url = `${this.apiUrl}/${jobSeekerId}/applications`;
-    return this.http.post<JobSeeker>(url, { applications });
-  }
+  addApplication(jobSeekerId: string, application: Application): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/${jobSeekerId}/applications`,
+      application               // <--- SINGLE application object
+    );
+    }
+
+
 }
