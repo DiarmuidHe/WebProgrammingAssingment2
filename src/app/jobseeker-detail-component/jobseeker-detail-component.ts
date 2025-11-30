@@ -33,7 +33,7 @@ import { MatDividerModule } from '@angular/material/divider';
   templateUrl: './jobseeker-detail-component.html',
   styleUrl: './jobseeker-detail-component.scss'
 })
-export class JobseekerDetailComponent implements OnInit {
+export class JobseekerDetailComponent {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -41,6 +41,7 @@ export class JobseekerDetailComponent implements OnInit {
   private jobSeekerService = inject(JobSeekerService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
+
 
   employer: Employer | null = null;
   job: Job | null = null;
@@ -84,7 +85,7 @@ export class JobseekerDetailComponent implements OnInit {
   }
 
   GoToJobList(): void {
-    this.router.navigate(['/jobs']);
+    this.router.navigate(['/jobseekers']);
   }
 
 onApply(): void {
@@ -114,13 +115,13 @@ onApply(): void {
   this.jobSeekerService.addApplication(jobSeekerId, application).subscribe({
     next: (res) => {
       console.log('Application added:', res);
-      this.router.navigate(['/jobs']);
+      this.router.navigate(['/jobseekers']);
       alert('Application submitted successfully!');
 
     },
     error: (err) => {
       console.error('Error submitting application', err);
-      this.router.navigate(['/jobs']);
+      this.router.navigate(['/jobseekers']);
       alert('Failed to submit application.');
     }
     

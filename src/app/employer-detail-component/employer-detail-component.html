@@ -161,9 +161,15 @@
             <mat-form-field appearance="outline">
             <mat-label>Job ID</mat-label>
             <input matInput formControlName="jobId" />
-            
-            @if (jobForm.get('jobId')?.invalid && jobForm.get('jobId')?.touched) {
+
+            @if (jobForm.get('jobId')?.touched) {
+                @if (jobForm.get('jobId')?.hasError('required')) {
                 <mat-error>Job ID is required</mat-error>
+                } @else if (jobForm.get('jobId')?.hasError('pattern')) {
+                <mat-error>
+                    Job ID must be 4–20 characters
+                </mat-error>
+                }
             }
             </mat-form-field>
 
@@ -172,8 +178,14 @@
             <mat-label>Title</mat-label>
             <input matInput formControlName="title" />
 
-            @if (jobForm.get('title')?.invalid && jobForm.get('title')?.touched) {
+            @if (jobForm.get('title')?.touched) {
+                @if (jobForm.get('title')?.hasError('required')) {
                 <mat-error>Title is required</mat-error>
+                } @else if (jobForm.get('title')?.hasError('minlength')) {
+                <mat-error>Title must be at least 3 characters</mat-error>
+                } @else if (jobForm.get('title')?.hasError('maxlength')) {
+                <mat-error>Title must be at most 100 characters</mat-error>
+                }
             }
             </mat-form-field>
 
@@ -181,6 +193,14 @@
             <mat-form-field appearance="outline">
             <mat-label>Location</mat-label>
             <input matInput formControlName="location" />
+
+            @if (jobForm.get('location')?.touched) {
+                @if (jobForm.get('location')?.hasError('required')) {
+                <mat-error>Location is required</mat-error>
+                } @else if (jobForm.get('location')?.hasError('maxlength')) {
+                <mat-error>Location is too long</mat-error>
+                }
+            }
             </mat-form-field>
 
             <!-- Job Type -->
@@ -192,6 +212,10 @@
                 <mat-option value="remote">Remote</mat-option>
                 <mat-option value="contract">Contract</mat-option>
             </mat-select>
+
+            @if (jobForm.get('jobType')?.touched && jobForm.get('jobType')?.hasError('required')) {
+                <mat-error>Job type is required</mat-error>
+            }
             </mat-form-field>
 
         </div>
@@ -200,30 +224,82 @@
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Description</mat-label>
             <textarea matInput rows="3" formControlName="description"></textarea>
+
+            @if (jobForm.get('description')?.touched) {
+            @if (jobForm.get('description')?.hasError('required')) {
+                <mat-error>Description is required</mat-error>
+            } @else if (jobForm.get('description')?.hasError('minlength')) {
+                <mat-error>Description must be at least 5 characters</mat-error>
+            } @else if (jobForm.get('description')?.hasError('maxlength')) {
+                <mat-error>Description is too long</mat-error>
+            }
+            }
         </mat-form-field>
 
         <!-- Salary -->
         <div class="form-grid">
+
+            <!-- Salary Min -->
             <mat-form-field appearance="outline">
             <mat-label>Salary Min</mat-label>
             <input matInput type="number" formControlName="salaryMin" />
+
+            @if (jobForm.get('salaryMin')?.touched) {
+                @if (jobForm.get('salaryMin')?.hasError('min')) {
+                <mat-error>Minimum salary must be at least 25,000</mat-error>
+                } @else if (jobForm.get('salaryMin')?.hasError('max')) {
+                <mat-error>Minimum salary is too high</mat-error>
+                }
+            }
             </mat-form-field>
 
+            <!-- Salary Max -->
             <mat-form-field appearance="outline">
             <mat-label>Salary Max</mat-label>
             <input matInput type="number" formControlName="salaryMax" />
+
+            @if (jobForm.get('salaryMax')?.touched) {
+                @if (jobForm.get('salaryMax')?.hasError('min')) {
+                <mat-error>Maximum salary must be at least 25,000</mat-error>
+                } @else if (jobForm.get('salaryMax')?.hasError('max')) {
+                <mat-error>Maximum salary is too high</mat-error>
+                }
+            }
+
+            <!-- Form-level salaryRange error shown under Max field -->
+            @if (jobForm.touched && jobForm.hasError('salaryRange')) {
+                <mat-error>Maximum salary must be greater than or equal to minimum salary</mat-error>
+            }
             </mat-form-field>
 
+            <!-- Currency -->
             <mat-form-field appearance="outline">
             <mat-label>Currency</mat-label>
-            <input matInput formControlName="salaryCurrency" />
+            <input matInput formControlName="salaryCurrency" placeholder="e.g. EUR" />
+
+            @if (jobForm.get('salaryCurrency')?.touched) {
+                @if (jobForm.get('salaryCurrency')?.hasError('required')) {
+                <mat-error>Currency is required</mat-error>
+                } @else if (jobForm.get('salaryCurrency')?.hasError('pattern')) {
+                <mat-error>Use a 3-letter currency code (e.g. EUR, USD)</mat-error>
+                }
+            }
             </mat-form-field>
+
         </div>
 
         <!-- Categories -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Categories (comma separated)</mat-label>
             <input matInput formControlName="categories" />
+            
+            @if (jobForm.get('categories')?.touched) {
+            @if (jobForm.get('categories')?.hasError('required')) {
+                <mat-error>At least one category is required</mat-error>
+            } @else if (jobForm.get('categories')?.hasError('maxlength')) {
+                <mat-error>Categories text is too long</mat-error>
+            }
+            }
         </mat-form-field>
 
         <button
@@ -235,6 +311,7 @@
         </button>
 
         </form>
+
 
     </mat-card-content>
     </mat-card>

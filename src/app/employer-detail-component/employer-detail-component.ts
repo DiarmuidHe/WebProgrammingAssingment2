@@ -62,17 +62,69 @@ export class EmployerDetailComponent implements OnInit {
   jobForm!: FormGroup;
 
   ngOnInit(): void {
-    this.jobForm = this.fb.group({
-      jobId: ['', Validators.required],
-      title: ['', Validators.required],
-      location: [''],
-      jobType: ['full-time', Validators.required],
-      description: [''],
-      salaryMin: [null],
-      salaryMax: [null],
-      salaryCurrency: [''],
-      categories: ['']
-    });
+    this.jobForm = this.fb.group(
+      {
+        jobId: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^[A-Za-z0-9_-]{4,20}$/), // 4–20 chars, letters, numbers, _ -
+          ],
+        ],
+        title: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(100),
+          ],
+        ],
+        location: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+          ],
+        ],
+        jobType: ['full-time', Validators.required],
+        description: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(5),
+            Validators.maxLength(2000),
+          ],
+        ],
+        salaryMin: [
+          null,
+          [
+            Validators.min(25000),
+            Validators.max(10000000),
+          ],
+        ],
+        salaryMax: [
+          null,
+          [
+            Validators.min(25000),
+            Validators.max(10000000),
+          ],
+        ],
+        salaryCurrency: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^[A-Z]{3}$/), // e.g. EUR, USD
+          ],
+        ],
+        categories: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(255),
+          ],
+        ],
+      },
+    );
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {

@@ -9,8 +9,10 @@
         <mat-label>Company Name</mat-label>
         <input matInput formControlName="companyName" />
 
-        @if (form.get('companyName')?.invalid && form.get('companyName')?.touched) {
-          <mat-error>Company name is required</mat-error>
+        @if (form.get('companyName')?.touched) {
+          @if (form.get('companyName')?.hasError('required')) {
+            <mat-error>Company name is required</mat-error>
+          }
         }
       </mat-form-field>
 
@@ -19,10 +21,12 @@
         <mat-label>Contact Email</mat-label>
         <input matInput formControlName="contactEmail" />
 
-        @if (form.get('contactEmail')?.hasError('required') && form.get('contactEmail')?.touched) {
-          <mat-error>Contact email is required</mat-error>
-        } @else if (form.get('contactEmail')?.hasError('email') && form.get('contactEmail')?.touched) {
-          <mat-error>Please enter a valid email address</mat-error>
+        @if (form.get('contactEmail')?.touched) {
+          @if (form.get('contactEmail')?.hasError('required')) {
+            <mat-error>Contact email is required</mat-error>
+          } @else if (form.get('contactEmail')?.hasError('email')) {
+            <mat-error>Please enter a valid email address</mat-error>
+          }
         }
       </mat-form-field>
 
@@ -31,8 +35,10 @@
         <mat-label>Location</mat-label>
         <input matInput formControlName="location" />
 
-        @if (form.get('location')?.invalid && form.get('location')?.touched) {
-          <mat-error>Location is required</mat-error>
+        @if (form.get('location')?.touched) {
+          @if (form.get('location')?.hasError('required')) {
+            <mat-error>Location is required</mat-error>
+          }
         }
       </mat-form-field>
 
@@ -40,6 +46,17 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Logo URL</mat-label>
         <input matInput formControlName="logo" />
+
+        @if (form.get('logo')?.touched) {
+          @if (form.get('logo')?.hasError('required')) {
+            <mat-error>Logo URL is required</mat-error>
+          } @else if (form.get('logo')?.hasError('pattern')) {
+            <mat-error>
+              Enter a valid image URL starting with http(s) and ending in
+              .png, .jpg, .jpeg, .gif or .svg
+            </mat-error>
+          }
+        }
       </mat-form-field>
 
       <!-- Description -->

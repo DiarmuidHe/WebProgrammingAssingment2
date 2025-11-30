@@ -6,6 +6,7 @@ export interface Employer {
   contactEmail: string;
   description: string;
   location: string;
+  
   logo?: string;
   jobs: Job[];
 }

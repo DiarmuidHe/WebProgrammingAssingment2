@@ -1,60 +1,78 @@
-<h2>Employers</h2>
+<mat-card class="employers-card">
+  <mat-card-header>
+    <div class="header-content">
+      <mat-card-title>Employers</mat-card-title>
 
-<div class="actions">
-  <a mat-raised-button color="primary" [routerLink]="['/employers/new']">
-    Add Employer
-  </a>
-</div>
+      <a
+        mat-raised-button
+        color="primary"
+        [routerLink]="['/employers/new']">
+        Add Employer
+      </a>
+    </div>
+  </mat-card-header>
 
-@if (loading) {
-  <p>Loading employers...</p>
-} @else {
-  @if (employers.length > 0) {
-    <table mat-table [dataSource]="employers" class="mat-elevation-z2">
+  <mat-card-content>
 
-      <ng-container matColumnDef="companyName">
-        <th mat-header-cell *matHeaderCellDef> Company </th>
-        <td mat-cell *matCellDef="let row"> {{ row.companyName }} </td>
-      </ng-container>
+    @if (loading) {
+      <p>Loading employers...</p>
+    } @else {
 
-      <ng-container matColumnDef="contactEmail">
-        <th mat-header-cell *matHeaderCellDef> Email </th>
-        <td mat-cell *matCellDef="let row"> {{ row.contactEmail }} </td>
-      </ng-container>
+      @if (employers.length > 0) {
 
-      <ng-container matColumnDef="location">
-        <th mat-header-cell *matHeaderCellDef> Location </th>
-        <td mat-cell *matCellDef="let row"> {{ row.location }} </td>
-      </ng-container>
+        <div class="employer-list">
+          @for (employer of employers; track employer._id) {
+            <mat-card class="employer-item">
+              <div class="employer-header">
+                <div class="employer-title">
+                  <h3>{{ employer.companyName }}</h3>
+                  <p class="employer-location">
+                    {{ employer.location || 'Location not specified' }}
+                  </p>
+                </div>
 
-      <ng-container matColumnDef="jobs">
-        <th mat-header-cell *matHeaderCellDef> Jobs </th>
-        <td mat-cell *matCellDef="let row">
-          {{ getJobsCount(row) }}
-        </td>
-      </ng-container>
+                <div class="employer-jobs">
+                  <span class="jobs-count">
+                    {{ getJobsCount(employer) }}
+                  </span>
+                  <span class="jobs-label">
+                    {{ getJobsCount(employer) === 1 ? 'job' : 'jobs' }}
+                  </span>
+                </div>
+              </div>
 
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> </th>
-        <td mat-cell *matCellDef="let row">
-          <a
-            mat-button
-            [routerLink]="['/employers', row._id]">
-            View
-          </a>
-          <button
-            mat-button
-            color="warn"
-            (click)="deleteEmployer(row._id)">
-            Delete
-          </button>
-        </td>
-      </ng-container>
+              <div class="employer-body">
+                <div class="employer-email">
+                  <span class="label">Email:</span>
+                  <a href="mailto:{{ employer.contactEmail }}">
+                    {{ employer.contactEmail }}
+                  </a>
+                </div>
+              </div>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  } @else {
-    <p>No employers found.</p>
-  }
-}
+              <div class="employer-actions">
+                <a
+                  mat-stroked-button
+                  [routerLink]="['/employers', employer._id]">
+                  View
+                </a>
+
+                <button
+                  mat-stroked-button
+                  color="warn"
+                  (click)="deleteEmployer(employer._id)">
+                  Delete
+                </button>
+              </div>
+            </mat-card>
+          }
+        </div>
+
+      } @else {
+        <p>No employers found.</p>
+      }
+
+    }
+
+  </mat-card-content>
+</mat-card>

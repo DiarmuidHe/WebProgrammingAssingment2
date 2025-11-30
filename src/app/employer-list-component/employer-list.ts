@@ -1,7 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { EmployerService } from '../employers/employer.service';
 import { Employer } from '../employers/employer.interface';
-import { AsyncPipe } from '@angular/common';
+
+import { MatCardHeader } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
@@ -9,9 +11,11 @@ import {ChangeDetectorRef} from '@angular/core';
 @Component({
   selector: 'app-employer-list',
     imports: [
-    MatTableModule,
-    MatButtonModule,
-    RouterLink
+      MatCardHeader,
+      MatCardModule,
+      MatTableModule,
+      MatButtonModule,
+      RouterLink
   ],
   standalone: true,
   templateUrl: './employer-list.html',

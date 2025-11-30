@@ -19,11 +19,6 @@ export class AuthService {
       email: jobSeeker.email
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    localStorage.setItem('currentJobSeeker', JSON.stringify({
-      _id: '68f3cdb3fb94b479f9616724',
-      name: 'James Murphy',
-      email: 'James.murphy@example.com'
-    }));
 
   }
 

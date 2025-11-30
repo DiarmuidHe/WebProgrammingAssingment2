@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ChangeDetectorRef } from '@angular/core';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-employer-list',
     imports: [
@@ -15,8 +16,8 @@ import { ChangeDetectorRef } from '@angular/core';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule
-
+    ReactiveFormsModule,
+    RouterLink
   ],
   standalone: true,
   templateUrl: './employer-form-component.html',
@@ -32,7 +33,7 @@ export class EmployerFormComponent{
     contactEmail: ['', [Validators.required, Validators.email]],
     description: [''],
     location: ['', Validators.required],
-    logo: ['']
+    logo: ['', Validators.required, Validators.pattern('(https?://.*\\.(?:png|jpg|jpeg|gif|svg))')]
   });
 
   onSubmit(): void {

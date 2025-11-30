@@ -46,9 +46,8 @@ export class JobSeekerService {
   addApplication(jobSeekerId: string, application: Application): Observable<any> {
     return this.http.post(
       `${this.apiUrl}/${jobSeekerId}/applications`,
-      application               // <--- SINGLE application object
+      application 
     );
     }
-
 
 }
