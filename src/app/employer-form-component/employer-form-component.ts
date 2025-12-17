@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 @Component({
-  selector: 'app-employer-list',
+  selector: 'app-employer-form',
     imports: [
     MatCardModule,
     MatButtonModule,
@@ -33,7 +33,8 @@ export class EmployerFormComponent{
     contactEmail: ['', [Validators.required, Validators.email]],
     description: [''],
     location: ['', Validators.required],
-    logo: ['', Validators.required, Validators.pattern('(https?://.*\\.(?:png|jpg|jpeg|gif|svg))')]
+    // wrap validators in an array
+    logo: ['', [Validators.required, Validators.pattern('(https?://.*\\.(?:png|jpg|jpeg|gif|svg))')]]
   });
 
   onSubmit(): void {
@@ -49,4 +50,5 @@ export class EmployerFormComponent{
       error: (err) => console.error('Error creating employer', err)
     });
   }
+
 }

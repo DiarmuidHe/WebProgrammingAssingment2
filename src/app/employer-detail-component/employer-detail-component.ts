@@ -157,7 +157,6 @@ export class EmployerDetailComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error toggling job status', err);
-        // 🔁 Revert UI on error
         job.active = previousStatus;
         this.cdr.markForCheck();
       }
