@@ -6,7 +6,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
 // Angular Material
@@ -29,7 +29,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatRadioModule
+    MatRadioModule,
+    RouterLink
   ],
   templateUrl: './login-component.html',
   styleUrl: './login-component.scss',
