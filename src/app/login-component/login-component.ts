@@ -56,19 +56,21 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    this.error = '';
+  this.error = '';
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return;
+  }
 
-    const { email, password } = this.form.value;
-    if (!email || !password) return;
+  const { email, password } = this.form.value;
+  if (!email || !password) return;
 
-    this.loading = true;
+  this.loading = true;
 
-    this.auth.registerJobseeker(this.name, email.trim().toLowerCase(), password).subscribe({
+  this.auth
+    .login(email.trim().toLowerCase(), password, 'jobseeker')
+    .subscribe({
       next: () => {
         this.loading = false;
         this.router.navigateByUrl('/');
@@ -78,7 +80,8 @@ export class LoginComponent {
         this.error = err?.error?.message ?? 'Login failed. Please try again.';
       },
     });
-  }
+}
+
   onGoogleLogin(): void {
     this.auth.beginGoogleLogin();
   }

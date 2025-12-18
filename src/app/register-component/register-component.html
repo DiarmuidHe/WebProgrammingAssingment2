@@ -1,0 +1,146 @@
+<div class="register-page">
+  <mat-card class="register-card">
+    <h1 class="title">Create your account</h1>
+    <p class="subtitle">Choose your role and fill in your details to get started.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="register-form">
+      <!-- Role selection -->
+      <section class="role-section">
+        <label class="section-label">I am a</label>
+        <mat-radio-group class="role-radio-group" formControlName="role">
+          <mat-radio-button value="jobseeker">
+            Jobseeker
+          </mat-radio-button>
+          <mat-radio-button value="employer">
+            Employer
+          </mat-radio-button>
+        </mat-radio-group>
+      </section>
+
+      <!-- Name -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" placeholder="John Doe" />
+        @if (nameCtrl?.invalid && nameCtrl?.touched) {
+          <mat-error>
+            @if (nameCtrl?.errors?.['required']) {
+              <span>Name is required.</span>
+            }
+            @if (nameCtrl?.errors?.['minlength']) {
+              <span>Name must be at least 2 characters.</span>
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="you@example.com" />
+        @if (emailCtrl?.invalid && emailCtrl?.touched) {
+          <mat-error>
+            @if (emailCtrl?.errors?.['required']) {
+              <span>Email is required.</span>
+            }
+            @if (emailCtrl?.errors?.['email']) {
+              <span>Please enter a valid email address.</span>
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Minimum 6 characters"
+        />
+        <button
+          type="button"
+          mat-icon-button
+          matSuffix
+          (click)="hidePassword.set(!hidePassword())"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hidePassword()"
+        >
+          <mat-icon>
+            @if (hidePassword()) {
+              visibility_off
+            } @else {
+              visibility
+            }
+          </mat-icon>
+        </button>
+        @if (passwordCtrl?.invalid && passwordCtrl?.touched) {
+          <mat-error>
+            @if (passwordCtrl?.errors?.['required']) {
+              <span>Password is required.</span>
+            }
+            @if (passwordCtrl?.errors?.['minlength']) {
+              <span>Password must be at least 6 characters.</span>
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Confirm Password -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Confirm password</mat-label>
+        <input
+          matInput
+          [type]="hideConfirmPassword() ? 'password' : 'text'"
+          formControlName="confirmPassword"
+          placeholder="Repeat your password"
+        />
+        <button
+          type="button"
+          mat-icon-button
+          matSuffix
+          (click)="hideConfirmPassword.set(!hideConfirmPassword())"
+          [attr.aria-label]="'Hide confirm password'"
+          [attr.aria-pressed]="hideConfirmPassword()"
+        >
+          <mat-icon>
+            @if (hideConfirmPassword()) {
+              visibility_off
+            } @else {
+              visibility
+            }
+          </mat-icon>
+        </button>
+        @if (confirmPasswordCtrl?.invalid && confirmPasswordCtrl?.touched) {
+          <mat-error>
+            @if (confirmPasswordCtrl?.errors?.['required']) {
+              <span>Please confirm your password.</span>
+            }
+          </mat-error>
+        }
+        @if (form?.errors?.['passwordsMismatch'] && confirmPasswordCtrl?.touched) {
+          <mat-error>Passwords do not match.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Submit button -->
+      <button
+        mat-raised-button
+        color="primary"
+        class="full-width submit-button"
+        [disabled]="form.invalid || isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          <span>Creating account...</span>
+        } @else {
+          <span>Create account</span>
+        }
+      </button>
+
+      <p class="login-link">
+        Already have an account?
+        <a routerLink="/login">Log in</a>
+      </p>
+    </form>
+  </mat-card>
+</div>
