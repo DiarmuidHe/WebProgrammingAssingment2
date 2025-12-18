@@ -68,7 +68,7 @@ export class LoginComponent {
 
     this.loading = true;
 
-    this.auth.register(this.name, email.trim().toLowerCase(), password).subscribe({
+    this.auth.registerJobseeker(this.name, email.trim().toLowerCase(), password).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigateByUrl('/');

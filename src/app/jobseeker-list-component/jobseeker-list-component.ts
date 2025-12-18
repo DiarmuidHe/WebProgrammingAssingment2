@@ -73,7 +73,7 @@ export class JobseekerListComponent implements OnInit {
   }
 
   private loadJobs(): void {
-    const currentId = this.authService.getCurrentJobSeekerId();
+    const currentId = this.authService.getCurrentUserId();
     //console.log('[JobseekerListComponent] current jobseeker ID:', currentId);
 
     if (!currentId) {

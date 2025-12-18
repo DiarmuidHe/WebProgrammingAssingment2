@@ -4,8 +4,23 @@ import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { JobSeeker } from '../jobseekers/jobseeker.interface';
 
-const STORAGE_KEY_USER = 'currentJobSeeker';
-const STORAGE_KEY_TOKEN = 'accessToken';
+type UserRole = "jobseeker" | "employer";
+
+type JwtPayload = {
+  sub?: string;
+  id?: string;
+  email: string;
+  name?: string;
+  role: UserRole;
+  exp: number;
+};
+
+export interface AuthUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+}
 
 type LoginResponse = {
   accessToken: string;
@@ -16,20 +31,15 @@ type RegisterResponse = {
   id: string;
 };
 
-type JwtPayload = {
-  sub?: string;
-  id?: string;
-  email: string;
-  name?: string;
-  exp: number;        // standard JWT expiry (seconds since epoch)
-};
+const STORAGE_KEY_USER = 'currentUser';
+const STORAGE_KEY_TOKEN = 'accessToken';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly apiUrl = environment.apiUri;
   private http = inject(HttpClient);
 
-  readonly currentJobSeeker$ = new BehaviorSubject<JobSeeker | null>(null);
+  readonly currentUser$ = new BehaviorSubject<AuthUser | null>(null);
   readonly isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
   private authTimeoutId?: any;
@@ -49,13 +59,14 @@ export class AuthService {
 
     const expires = payload.exp * 1000;
     if (expires > Date.now()) {
-      const jobSeeker: JobSeeker = {
+      const user: AuthUser = {
         _id: (payload.sub || payload.id) as string,
         name: payload.name ?? '',
-        email: payload.email
+        email: payload.email,
+        role: payload.role,
       };
 
-      this.currentJobSeeker$.next(jobSeeker);
+      this.currentUser$.next(user);
       this.isAuthenticated$.next(true);
       this.startAuthTimer(expires);
     } else {
@@ -63,12 +74,11 @@ export class AuthService {
     }
   }
 
-
   // PUBLIC API
 
-  login(email: string, password: string): Observable<void> {
+  login(email: string, password: string, role: UserRole): Observable<void> {
     return this.http
-      .post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password })
+      .post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password, role })
       .pipe(
         map((body) => {
           this.setSessionFromToken(body.accessToken);
@@ -76,33 +86,41 @@ export class AuthService {
       );
   }
 
-
-  
-
-  // register creates the account, then auto-logs in with same creds
-  register(name: string, email: string, password: string): Observable<void> {
+  registerJobseeker(name: string, email: string, password: string): Observable<void> {
     return this.http
-      .post<RegisterResponse>(`${this.apiUrl}/auth/register`, { name, email, password })
-      .pipe(
-        switchMap(() => this.login(email, password))
-      );
+      .post<RegisterResponse>(`${this.apiUrl}/auth/register/jobseeker`, {
+        name,
+        email,
+        password,
+      })
+      .pipe(switchMap(() => this.login(email, password, 'jobseeker')));
   }
 
-  beginGoogleLogin(): void {
-    window.location.href = `${this.apiUrl}/auth/google`;
+  registerEmployer(name: string, email: string, password: string): Observable<void> {
+    return this.http
+      .post<RegisterResponse>(`${this.apiUrl}/auth/register/employer`, {
+        name,
+        email,
+        password,
+      })
+      .pipe(switchMap(() => this.login(email, password, 'employer')));
+  }
+
+  beginGoogleLogin(role: UserRole = 'jobseeker'): void {
+    // sends role as state to backend
+    window.location.href = `${this.apiUrl}/auth/google?state=${encodeURIComponent(role)}`;
   }
 
   completeOAuthLogin(token: string): void {
     this.setSessionFromToken(token);
   }
 
-  
-  getCurrentJobSeeker(): JobSeeker | null {
-    return this.currentJobSeeker$.value;
+  getCurrentUser(): AuthUser | null {
+    return this.currentUser$.value;
   }
 
-  getCurrentJobSeekerId(): string | null {
-    return this.currentJobSeeker$.value?._id ?? null;
+  getCurrentUserId(): string | null {
+    return this.currentUser$.value?._id ?? null;
   }
 
   getToken(): string | null {
@@ -128,24 +146,25 @@ export class AuthService {
 
     const expires = payload.exp * 1000;
 
-    const jobSeeker: JobSeeker = {
+    const user: AuthUser = {
       _id: (payload.sub || payload.id) as string,
       name: payload.name ?? '',
-      email: payload.email
+      email: payload.email,
+      role: payload.role,
     };
 
     localStorage.setItem(STORAGE_KEY_TOKEN, token);
-    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(jobSeeker));
+    localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
 
-    this.currentJobSeeker$.next(jobSeeker);
+    this.currentUser$.next(user);
     this.isAuthenticated$.next(true);
     this.startAuthTimer(expires);
   }
-  
+
   private clearAuth() {
     localStorage.removeItem(STORAGE_KEY_TOKEN);
     localStorage.removeItem(STORAGE_KEY_USER);
-    this.currentJobSeeker$.next(null);
+    this.currentUser$.next(null);
     this.isAuthenticated$.next(false);
     if (this.authTimeoutId) {
       clearTimeout(this.authTimeoutId);
@@ -154,7 +173,6 @@ export class AuthService {
   }
 
   private startAuthTimer(expires: number) {
-    // re-auth / logout 1 minute before expiry
     const timeout = expires - Date.now() - 60_000;
     if (timeout <= 0) {
       this.logout();
@@ -166,7 +184,6 @@ export class AuthService {
     }
 
     this.authTimeoutId = setTimeout(() => {
-      // refresh not implemented → logout instead
       this.logout();
     }, timeout);
   }

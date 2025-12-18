@@ -94,7 +94,7 @@ onApply(): void {
     return;
   }
 
-  const jobSeekerId = this.authService.getCurrentJobSeekerId();
+  const jobSeekerId = this.authService.getCurrentUserId();
 
   if (!jobSeekerId) {
     alert('Please log in as a jobseeker before applying.');
