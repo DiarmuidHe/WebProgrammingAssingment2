@@ -162,3 +162,15 @@
 .full-width {
   width: 100%;
 }
+.job-logo {
+  background-size: cover;
+  background-position: center;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 32px;
+  }
+}

@@ -5,10 +5,14 @@
     <!-- EMPLOYER CARD -->
     <mat-card class="employer-card mat-elevation-z4">
       <mat-card-header>
-        <div mat-card-avatar class="employer-avatar">
+      <div mat-card-avatar class="job-logo"
+           [ngStyle]="{
+             'background-image': employer.logo ? 'url(' + employer.logo + ')' : 'none'
+           }">
+        @if (!employer.logo) {
           <mat-icon>business</mat-icon>
-        </div>
-
+        }
+      </div>
         <mat-card-title>{{ employer.companyName }}</mat-card-title>
 
         <mat-card-subtitle class="employer-location">

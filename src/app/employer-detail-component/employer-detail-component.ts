@@ -17,10 +17,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
+import { NgStyle } from '@angular/common';
 @Component({
   selector: 'app-employer-detail-component',
   standalone: true,
   imports: [
+    NgStyle,
     MatInput,
     MatSelect,
     DatePipe,
