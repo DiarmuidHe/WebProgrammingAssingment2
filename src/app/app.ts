@@ -37,15 +37,27 @@ export class App {
   }
 
   goToAccount(): void {
-    if (!this.auth.isLoggedIn()) {
+    if (!this.auth.isLoggedIn() || this.auth.getCurrentUser()?.role === 'admin') {
       return;
     }
 
     this.router.navigate(['/account']);
   }
 
+  goToAdmin(): void {
+    if (this.auth.getCurrentUser()?.role !== 'admin') {
+      return;
+    }
+
+    this.router.navigate(['/admin']);
+  }
+
   isAccountRoute(): boolean {
     return this.router.url.startsWith('/account');
+  }
+
+  isAdminRoute(): boolean {
+    return this.router.url.startsWith('/admin');
   }
 
   logout(): void {

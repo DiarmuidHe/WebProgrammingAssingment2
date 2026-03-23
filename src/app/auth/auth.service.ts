@@ -2,9 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { JobSeeker } from '../jobseekers/jobseeker.interface';
-
-type UserRole = "jobseeker" | "employer";
+export type UserRole = 'jobseeker' | 'employer' | 'admin';
 
 type JwtPayload = {
   sub?: string;
@@ -115,7 +113,7 @@ export class AuthService {
       .pipe(switchMap(() => this.login(email, password, 'employer')));
   }
 
-  beginGoogleLogin(role: UserRole = 'jobseeker'): void {
+  beginGoogleLogin(role: Exclude<UserRole, 'admin'> = 'jobseeker'): void {
     // sends role as state to backend
     window.location.href = `${this.apiUrl}/auth/google?state=${encodeURIComponent(role)}`;
   }

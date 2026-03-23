@@ -2,10 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service'; // adjust path if needed
-
-// Re-declare role type here
-type UserRole = 'jobseeker' | 'employer';
+import { AuthService, UserRole } from '../auth/auth.service'; // adjust path if needed
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -43,7 +40,7 @@ export class RegisterComponent {
 
   form: FormGroup = this.fb.group(
     {
-      role: ['jobseeker' as UserRole, Validators.required],
+      role: ['jobseeker' as Exclude<UserRole, 'admin'>, Validators.required],
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -104,7 +101,7 @@ export class RegisterComponent {
     logo,
     description,
   } = this.form.value as {
-    role: UserRole;
+    role: Exclude<UserRole, 'admin'>;
     name: string;
     email: string;
     password: string;

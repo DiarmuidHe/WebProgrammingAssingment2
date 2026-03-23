@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
+import { UserRole } from '../auth/auth.service';
 @Component({
   selector: 'app-login-component',
   standalone: true,
@@ -47,7 +48,7 @@ export class LoginComponent {
   form: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-     role: ['jobseeker', Validators.required],
+     role: ['jobseeker' as UserRole, Validators.required],
   });
 
   get email() {
@@ -76,7 +77,7 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           this.loading = false;
-          this.router.navigateByUrl('/');
+          this.router.navigateByUrl(role === 'admin' ? '/admin' : '/');
         },
         error: (err) => {
           this.loading = false;

@@ -7,14 +7,15 @@
     Jobs
   </a>
 
-  <button
-    mat-button
-    type="button"
-    [disabled]="!auth.isLoggedIn()"
-    [class.active-link]="isAccountRoute()"
-    (click)="goToAccount()">
-    Account
-  </button>
+  @if (auth.isLoggedIn() && auth.getCurrentUser()?.role !== 'admin') {
+    <button
+      mat-button
+      type="button"
+      [class.active-link]="isAccountRoute()"
+      (click)="goToAccount()">
+      Account
+    </button>
+  }
 
   @if (auth.isLoggedIn() && auth.getCurrentUser()?.role === 'employer') {
     <a
@@ -24,6 +25,16 @@
     >
       Dashboard
     </a>
+  }
+
+  @if (auth.isLoggedIn() && auth.getCurrentUser()?.role === 'admin') {
+    <button
+      mat-button
+      type="button"
+      [class.active-link]="isAdminRoute()"
+      (click)="goToAdmin()">
+      Admin
+    </button>
   }
 
   <!-- Right side: login / logout -->

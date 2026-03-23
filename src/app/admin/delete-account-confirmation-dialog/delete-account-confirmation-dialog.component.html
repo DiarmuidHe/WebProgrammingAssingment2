@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Delete {{ data.entityLabel }}</h2>
+
+<mat-dialog-content class="dialog-content">
+  <p>
+    This permanently removes <strong>{{ data.accountName }}</strong>. This action cannot be undone.
+  </p>
+  <p>Type <strong>DELETE</strong> to confirm.</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Confirmation text</mat-label>
+    <input matInput [formControl]="confirmation" autocomplete="off" />
+    @if (confirmation.hasError('required') && confirmation.touched) {
+      <mat-error>Confirmation text is required.</mat-error>
+    } @else if (confirmation.hasError('mismatch')) {
+      <mat-error>Enter DELETE to confirm this action.</mat-error>
+    }
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancel</button>
+  <button mat-flat-button type="button" class="delete-button" (click)="confirmDelete()">Delete account</button>
+</mat-dialog-actions>

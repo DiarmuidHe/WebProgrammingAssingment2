@@ -1,0 +1,14 @@
+.dialog-content {
+  display: grid;
+  gap: 0.75rem;
+  min-width: min(28rem, 85vw);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.delete-button {
+  background: #b91c1c;
+  color: #ffffff;
+}

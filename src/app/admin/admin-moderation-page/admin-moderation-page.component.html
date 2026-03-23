@@ -1,0 +1,164 @@
+<section class="admin-page">
+  <mat-card class="filters-card">
+    <div class="filters-header">
+      <div>
+        <p class="section-label">Admin moderation</p>
+        <h1>Account moderation panel</h1>
+        <p class="section-copy">
+          Review jobseekers and employers, run moderation actions, and expand a card only when
+          you need more detail.
+        </p>
+      </div>
+    </div>
+
+    <div class="filters-grid">
+      <div class="tab-strip" aria-label="Moderation sections">
+        <button
+          type="button"
+          class="tab-button"
+          [class.active]="activeTab() === 'jobseekers'"
+          (click)="setActiveTab('jobseekers')">
+          Jobseekers
+          <span>{{ jobseekerCount() }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="tab-button"
+          [class.active]="activeTab() === 'employers'"
+          (click)="setActiveTab('employers')">
+          Employers
+          <span>{{ employerCount() }}</span>
+        </button>
+      </div>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search {{ activeTab() === 'jobseekers' ? 'jobseekers' : 'employers' }}</mat-label>
+        <input
+          matInput
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          [placeholder]="activeTab() === 'jobseekers' ? 'Search by name or email' : 'Search by company or contact email'"
+          autocomplete="off" />
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  <mat-card class="results-card">
+    <div class="results-header">
+      <h2>{{ activeTab() === 'jobseekers' ? 'Jobseekers' : 'Employers' }}</h2>
+      <span class="results-count">
+        {{ filteredAccounts().length }} account{{ filteredAccounts().length === 1 ? '' : 's' }}
+      </span>
+    </div>
+
+    @if (activeLoading()) {
+      <div class="state-block">
+        <p>Loading accounts...</p>
+      </div>
+    } @else if (activeError()) {
+      <div class="state-block error">
+        <p>{{ activeError() }}</p>
+      </div>
+    } @else if (!filteredAccounts().length) {
+      <div class="state-block">
+        <p>No accounts match the current filter.</p>
+      </div>
+    } @else {
+      <div class="account-grid">
+        @for (account of filteredAccounts(); track account.id) {
+          <mat-card class="account-card">
+            <div class="account-card-header">
+              <div>
+                <h3>{{ account.displayName }}</h3>
+                <p class="account-email">{{ account.email || 'No contact email provided' }}</p>
+              </div>
+
+              <div class="badges">
+                <span class="pill">{{ account.entityType === 'jobseekers' ? 'Jobseeker' : 'Employer' }}</span>
+                <span class="pill" [class.suspended-pill]="account.status === 'suspended'">
+                  {{ account.status === 'suspended' ? 'Suspended' : 'Active' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="account-card-body">
+              <p><strong>Created:</strong> {{ account.createdAt ? (account.createdAt | date: 'mediumDate') : 'Unavailable' }}</p>
+            </div>
+
+            <div class="account-actions">
+              <button
+                type="button"
+                mat-stroked-button
+                (click)="toggleExpanded(account)">
+                {{ isExpanded(account.id) ? 'Hide details' : 'View details' }}
+              </button>
+
+              <button
+                type="button"
+                mat-stroked-button
+                [disabled]="isBusy(account.id, 'toggle')"
+                (click)="onToggleSuspension(getAccountDetails(account) ?? account)">
+                {{ isBusy(account.id, 'toggle')
+                  ? 'Working...'
+                  : account.status === 'suspended'
+                    ? 'Unsuspend'
+                    : 'Suspend' }}
+              </button>
+
+              <button
+                type="button"
+                mat-stroked-button
+                color="warn"
+                [disabled]="isBusy(account.id, 'delete')"
+                (click)="onDelete(getAccountDetails(account) ?? account)">
+                {{ isBusy(account.id, 'delete') ? 'Deleting...' : 'Delete' }}
+              </button>
+            </div>
+
+            <div class="account-dropdown" [class.open]="isExpanded(account.id)">
+              @if (isExpanded(account.id)) {
+                <div class="dropdown-header">
+                  <span>Additional details</span>
+                </div>
+
+                @if (isDetailsLoading(account.id)) {
+                  <div class="dropdown-state">
+                    <p>Loading details...</p>
+                  </div>
+                } @else if (getDetailsError(account.id)) {
+                  <div class="dropdown-state error">
+                    <p>{{ getDetailsError(account.id) }}</p>
+                  </div>
+                } @else if (getAccountDetails(account); as details) {
+                  @if (details.status === 'suspended') {
+                    <div class="moderation-note">
+                      <p>
+                        <strong>Suspended:</strong>
+                        @if (details.suspendedAt) {
+                          {{ details.suspendedAt | date: 'medium' }}
+                        } @else {
+                          Yes
+                        }
+                      </p>
+                      <p><strong>Reason:</strong> {{ details.suspensionReason || 'No reason provided' }}</p>
+                    </div>
+                  }
+
+                  <dl class="details-grid">
+                    @for (field of details.detailFields; track field.label) {
+                      <div class="detail-item">
+                        <dt>{{ field.label }}</dt>
+                        <dd>{{ field.value }}</dd>
+                      </div>
+                    }
+                  </dl>
+                }
+              }
+            </div>
+          </mat-card>
+        }
+      </div>
+    }
+  </mat-card>
+</section>
