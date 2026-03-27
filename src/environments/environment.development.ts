@@ -1,9 +1,9 @@
 export const environment = {
     production: false,
-    apiUri: 'http://3.249.250.18/api/v1',
+    apiUri: 'http://localhost:3000/api/v1',
     deployedAccountApiUri: 'https://4b0lg5si25.execute-api.eu-west-1.amazonaws.com/dev/api/v1/account',
     authApiUris: [
-        'http://3.249.250.18/api/v1',
+        'http://localhost:3000/api/v1',
         'https://4b0lg5si25.execute-api.eu-west-1.amazonaws.com/dev/api/v1'
     ],
     accountEndpoints: {
