@@ -12,4 +12,4 @@ FROM nginx:1.29-alpine
 
 EXPOSE 80
 
-COPY --from=build /app/dist/WebProgrammingAssingment2/browser /usr/share/nginx/html
+COPY --from=build /app/dist/jobfinder/browser /usr/share/nginx/html

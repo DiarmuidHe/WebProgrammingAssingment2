@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "WebProgrammingAssingment2": {
+    "jobfinder": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -67,10 +67,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "WebProgrammingAssingment2:build:production"
+              "buildTarget": "jobfinder:build:production"
             },
             "development": {
-              "buildTarget": "WebProgrammingAssingment2:build:development"
+              "buildTarget": "jobfinder:build:development"
             }
           },
           "defaultConfiguration": "development"
